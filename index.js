@@ -42,8 +42,10 @@ const main = async () => {
         })
         console.log(`Connected to database with ID ${connection.threadId}`);
 
-        await viewEmployees(connection);
-        //await addEmployee();
+        //await viewEmployees(connection);
+        await addEmployee(connection);
+        //await practice(connection);
+        //await getRoles(connection);
 
 
 
@@ -57,12 +59,12 @@ main();
 
 const viewEmployees = async (connection) => {
 
-    const[rows,fields] = await connection.query("SELECT * FROM employee INNER JOIN role ON employee.role_id = role.id");
+    const[rows,fields] = await connection.query("SELECT employee.id,employee.first_name,employee.last_name,role.title FROM employee INNER JOIN role ON employee.role_id = role.id");
     console.table(rows);
 }
 
 const addEmployee = async(connection) => {
-
+    let roles = await getRoles(connection);
     await inquirer.prompt([    //Do I need 'return or await'?
 
         {
@@ -79,7 +81,7 @@ const addEmployee = async(connection) => {
             type: "list",
             name: "role",
             message: "What is the employee's role?",
-            choices: ["Engineering", "Finance", "Sales"]
+            choices: roles
         },
         {
             type: "input",
@@ -89,8 +91,36 @@ const addEmployee = async(connection) => {
     ])
     .then(answers => {
 
-        //console.log(answers);
+    // const sqlQuery = "INSERT INTO employee SET ?"
+    // const params = {first_name:answers.first_name, last_name:answers.last_name, role_id:3, manager_id:2}
+
+    // const [rows, fields] = await connection.query(sqlQuery, params);
+
+    // console.log(rows);
+    
+
         
 
     })
+
+
+}
+
+const practice = async (connection) => {
+
+    const sqlQuery = "INSERT INTO employee SET ?"
+    const params = {first_name:"Alex", last_name:"Posh", role_id:3, manager_id:2}
+
+    const [rows, fields] = await connection.query(sqlQuery, params);
+
+    console.log(rows);
+    
+}
+
+const getRoles = async (connection) => {
+
+    const[rows,fields] = await connection.query("SELECT title FROM role");
+    // map applies a function you define to each element in the array
+    let titles = rows.map((item) => { return item.title });
+    //console.log(titles);
 }
