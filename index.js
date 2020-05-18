@@ -59,12 +59,18 @@ main();
 
 const viewEmployees = async (connection) => {
 
-    const[rows,fields] = await connection.query("SELECT employee.id,employee.first_name,employee.last_name,role.title FROM employee INNER JOIN role ON employee.role_id = role.id");
+//     SELECT Orders.OrderID, Customers.CustomerName, Shippers.ShipperName
+// FROM ((Orders
+// INNER JOIN Customers ON Orders.CustomerID = Customers.CustomerID)
+// INNER JOIN Shippers ON Orders.ShipperID = Shippers.ShipperID);
+
+    const[rows,fields] = await connection.query("SELECT employee.id,employee.first_name,employee.last_name,role.title,department.name,role.salary FROM role INNER JOIN employee ON role.id = employee.role_id INNER JOIN department ON role.department_id = department.id INNER JOIN Manager ON role.id = Manager.role_id");
     console.table(rows);
 }
 
 const addEmployee = async(connection) => {
     let roles = await getRoles(connection);
+    
     await inquirer.prompt([    //Do I need 'return or await'?
 
         {
@@ -78,32 +84,42 @@ const addEmployee = async(connection) => {
             message: "What is the employee's last name?"
         },
         {
-            type: "list",
+            type: "rawlist",
             name: "role",
             message: "What is the employee's role?",
             choices: roles
-        },
-        {
-            type: "input",
-            name: "employee_manager",
-            message: "Who is the employees's manager?"
         }
+        // {
+        //     type: "input",
+        //     name: "employee_manager",
+        //     message: "Who is the employees's manager?"
+        // }
     ])
-    .then(answers => {
+    .then(async (answers) => {
+    let roleID = await getRoleID(connection, answers.role);
+    const sqlQuery = "INSERT INTO employee SET ?"
+    const params = {first_name:answers.first_name, last_name:answers.last_name, role_id:roleID}
 
-    // const sqlQuery = "INSERT INTO employee SET ?"
-    // const params = {first_name:answers.first_name, last_name:answers.last_name, role_id:3, manager_id:2}
+    const [rows, fields] = await connection.query(sqlQuery, params);
 
-    // const [rows, fields] = await connection.query(sqlQuery, params);
+    console.log(rows);
 
-    // console.log(rows);
-    
-
-        
-
+    //sales, finance engineer  
     })
 
 
+}
+
+const getRoleID = async (connection, role) => {
+
+
+    const sqlQuery = "SELECT id FROM role WHERE ?"
+    const params = {title: role}
+
+    const [rows, fields] = await connection.query(sqlQuery, params);
+
+    return rows[0].id;
+    
 }
 
 const practice = async (connection) => {
@@ -122,5 +138,6 @@ const getRoles = async (connection) => {
     const[rows,fields] = await connection.query("SELECT title FROM role");
     // map applies a function you define to each element in the array
     let titles = rows.map((item) => { return item.title });
-    //console.log(titles);
+   // console.log(titles);
+   return titles;
 }
