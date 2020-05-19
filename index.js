@@ -1,33 +1,3 @@
-// Constuctor/employee class?
-
-// Employee - iD, First, Last, role ID, Manager ID
-// -Add()
-// -View()
-// -Update Employee Role()
-
-// Dept - ID, name
-// -Add()
-// -View()
-// Role - ID, Title, Salary, Dept_ID
-// -Add()
-// -View()
-
-//*BONUS - update employee managers, view employees by manager, delete dept, roles, and employees, view combines salaries in a dept.
-
-//What would you like to do?  required*
-// View All Employees*
-// View All Roles*
-// View All Departments
-// Add Employees - done
-//update employee role
-//update employee manager
-//Add Roles - done
-// Update Employee Role*
-// Update Employee Manager
-// Remove Employee
-// View All Employees By Department
-// View All Employees By Manager
-
 const inquirer = require('inquirer');
 const mysql = require('mysql2/promise');
 
@@ -53,7 +23,7 @@ const main = async () => {
         //await viewDepts(connection)
         //await addEmployee(connection);  
         //await addRole(connection);
-        await addDept(connection);
+        //await addDept(connection);
         //await updateEmployeeRole(connection)
         
         connection.end();
@@ -69,7 +39,7 @@ main();
 
 const viewAll = async (connection) => {
 
-    const[rows,fields] = await connection.query("SELECT e.emp_id,e.first_name,e.last_name,r.title,department.dept_name,r.salary FROM role r INNER JOIN employee e ON r.role_id = e.role_id INNER JOIN department ON r.department_id = department.dept_id");
+    const[rows,fields] = await connection.query("SELECT e.emp_id,e.first_name,e.last_name,r.title,department.dept_name,r.salary,mgr_name FROM role r INNER JOIN employee e ON r.role_id = e.role_id INNER JOIN department ON r.department_id = department.dept_id INNER JOIN manager ON e.manager_id = manager.mgr_id");
     console.table(rows);
 }
 
