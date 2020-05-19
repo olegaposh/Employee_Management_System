@@ -47,14 +47,14 @@ const main = async () => {
 
         //how to get rid of index? when to use try?
 
+        //await viewAll(connection);
         //await viewEmployees(connection);
         //await viewRoles(connection);
+        //await viewDepts(connection)
         //await addEmployee(connection);  
         //await addRole(connection);
-        //await practice(connection);
-        //await getRoles(connection);
-        //await getDepartments(connection);
-        await updateEmployeeRole(connection)
+        await addDept(connection);
+        //await updateEmployeeRole(connection)
         
         connection.end();
     } catch (err) {
@@ -65,19 +65,33 @@ const main = async () => {
 
 main();
 
-// View Employees
+// Main functions
+
+const viewAll = async (connection) => {
+
+    const[rows,fields] = await connection.query("SELECT e.emp_id,e.first_name,e.last_name,r.title,department.dept_name,r.salary FROM role r INNER JOIN employee e ON r.role_id = e.role_id INNER JOIN department ON r.department_id = department.dept_id");
+    console.table(rows);
+}
+
 const viewEmployees = async (connection) => {
 
-    const[rows,fields] = await connection.query("SELECT employee.id,employee.first_name,employee.last_name,role.title,department.name,role.salary FROM role INNER JOIN employee ON role.id = employee.role_id INNER JOIN department ON role.department_id = department.id");
+    const[rows,fields] = await connection.query("SELECT emp_id,first_name,last_name FROM employee");
     console.table(rows);
 }
-// View Roles/depts
+
 const viewRoles = async (connection) => {
 
-    const[rows,fields] = await connection.query("SELECT role.id,title,salary,name FROM role INNER JOIN department ON role.department_id = department.id");
+    const[rows,fields] = await connection.query("SELECT role_id,title,salary FROM role");
     console.table(rows);
 }
-// add Employee
+
+const viewDepts = async (connection) => {
+
+    const[rows,fields] = await connection.query("SELECT dept_id,dept_name FROM department");
+    console.table(rows);
+}
+
+
 const addEmployee = async(connection) => {
     
     let roles = await getRoles(connection);
@@ -116,7 +130,7 @@ const addEmployee = async(connection) => {
     console.log(`${answers.first_name} ${answers.last_name} has been added`);
     })
 }
-// add Role
+
 const addRole = async(connection) => {
     
     let departments = await getDepartments(connection);
@@ -151,61 +165,29 @@ const addRole = async(connection) => {
     })
 }
 
-const getRoleID = async (connection, role) => {
+const addDept = async(connection) => {
+    
+    
+    
+    await inquirer.prompt(    
 
-//whats the ID of the chosen role (sales/finance/engineer)
-    const sqlQuery = "SELECT id FROM role WHERE ?"
-    const params = {title: role}
+        {
+            type: "input",
+            name: "newDept",
+            message: "What is the name of the department you want to add?"
+        }
+    )
+    .then(async (answers) => {
+    
+    const sqlQuery = "INSERT INTO department SET ?"
+    const params = {dept_name:answers.newDept}
 
     const [rows, fields] = await connection.query(sqlQuery, params);
 
-    return rows[0].id;
-    
+    console.log(`${answers.newDept} has been added!`);
+    })
 }
 
-const practice = async (connection) => {
-
-    const sqlQuery = "INSERT INTO employee SET ?"
-    const params = {first_name:"Alex", last_name:"Posh", role_id:3, manager_id:2}
-
-    const [rows, fields] = await connection.query(sqlQuery, params);
-
-    console.log(rows);
-    
-}
-
-const getRoles = async (connection) => {
-
-    const[rows,fields] = await connection.query("SELECT title FROM role");
-    
-    // map applies a function you define to each element in the array
-    let titles = rows.map((item) => { return item.title });
-   // console.log(titles);
-   return titles;
-}
-
-const getDepartments = async (connection) => {
-
-    const[rows,fields] = await connection.query("SELECT name FROM department");
-    
-    //map applies a function you define to each element in the array
-    let deptName = rows.map((item) => { return item.name });
-   // console.log(titles);
-    return deptName;
-
-}
-
-const getDeptID = async (connection, dept) => {
-
-//whats the ID of the chosen Department (Marketing/Treasury/R&D)    
-    const params = {name: dept}
-    
-    const [rows, fields] = await connection.query(sqlQuery, params);
-    
-    return rows[0].id;
-        
-}
-    
 const updateEmployeeRole = async (connection) => {
 
     let employees = await getEmployees(connection);
@@ -242,6 +224,54 @@ const updateEmployeeRole = async (connection) => {
     })
 }
 
+// Helper functions 
+
+const getRoleID = async (connection, role) => {
+
+//whats the ID of the chosen role (sales/finance/engineer)
+    const sqlQuery = "SELECT role_id FROM role WHERE ?"
+    const params = {title: role}
+
+    const [rows, fields] = await connection.query(sqlQuery, params);
+
+    return rows[0].role_id;
+    
+}
+
+
+const getRoles = async (connection) => {
+
+    const[rows,fields] = await connection.query("SELECT title FROM role");
+    
+    // map applies a function you define to each element in the array
+    let titles = rows.map((item) => { return item.title });
+   // console.log(titles);
+   return titles;
+}
+
+const getDepartments = async (connection) => {
+
+    const[rows,fields] = await connection.query("SELECT dept_name FROM department");
+    
+    //map applies a function you define to each element in the array
+    let deptName = rows.map((item) => { return item.dept_name });
+   // console.log(titles);
+    return deptName;
+
+}
+
+const getDeptID = async (connection, dept) => {
+
+//whats the ID of the chosen Department (Marketing/Treasury/R&D)    
+    const sqlQuery = "SELECT dept_id FROM department WHERE ?"
+    const params = {dept_name: dept}
+    
+    const [rows, fields] = await connection.query(sqlQuery, params);
+    
+    return rows[0].dept_id;
+        
+}
+    
 const getEmployees = async (connection) => {
 
     const[rows,fields] = await connection.query("SELECT first_name, last_name FROM employee");
