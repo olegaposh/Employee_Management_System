@@ -17,8 +17,11 @@
 //What would you like to do?  required*
 // View All Employees*
 // View All Roles*
-// View All Departments*
-// Add Employees*
+// View All Departments
+// Add Employees - done
+//update employee role
+//update employee manager
+//Add Roles - done
 // Update Employee Role*
 // Update Employee Manager
 // Remove Employee
@@ -42,18 +45,18 @@ const main = async () => {
         })
         console.log(`Connected to database with ID ${connection.threadId}`);
 
-            //how to get rid of index?
+        //how to get rid of index? when to use try?
+
         //await viewEmployees(connection);
         //await viewRoles(connection);
-            //has issue with answer options
         //await addEmployee(connection);  
-        await addRole(connection);
+        //await addRole(connection);
         //await practice(connection);
         //await getRoles(connection);
         //await getDepartments(connection);
-
-
-
+        await updateEmployeeRole(connection)
+        
+        connection.end();
     } catch (err) {
         console.log(err);
     }
@@ -74,7 +77,7 @@ const viewRoles = async (connection) => {
     const[rows,fields] = await connection.query("SELECT role.id,title,salary,name FROM role INNER JOIN department ON role.department_id = department.id");
     console.table(rows);
 }
-
+// add Employee
 const addEmployee = async(connection) => {
     
     let roles = await getRoles(connection);
@@ -110,10 +113,10 @@ const addEmployee = async(connection) => {
 
     const [rows, fields] = await connection.query(sqlQuery, params);
 
-    console.log(rows);
+    console.log(`${answers.first_name} ${answers.last_name} has been added`);
     })
 }
-
+// add Role
 const addRole = async(connection) => {
     
     let departments = await getDepartments(connection);
@@ -144,7 +147,7 @@ const addRole = async(connection) => {
     const sqlQuery = "INSERT INTO role SET ?"
     const [rows, fields] = await connection.query(sqlQuery, params);
 
-    console.log(rows);
+    console.log(`The ${answers.title} role has been added`);
     })
 }
 
@@ -194,13 +197,55 @@ const getDepartments = async (connection) => {
 
 const getDeptID = async (connection, dept) => {
 
-    //whats the ID of the chosen Department (Marketing/Treasury/R&D)
-        const sqlQuery = "SELECT id FROM department WHERE ?"
-        const params = {name: dept}
+//whats the ID of the chosen Department (Marketing/Treasury/R&D)    
+    const params = {name: dept}
     
-        const [rows, fields] = await connection.query(sqlQuery, params);
+    const [rows, fields] = await connection.query(sqlQuery, params);
     
-        return rows[0].id;
+    return rows[0].id;
         
-    }
+}
     
+const updateEmployeeRole = async (connection) => {
+
+    let employees = await getEmployees(connection);
+    let roles = await getRoles(connection);
+    await inquirer.prompt([
+
+        {
+            type: "list",
+            name: "update",
+            message: "For which employee would you like to update their role?",
+            choices: employees
+
+        },
+        {
+            type: "list",
+            name: "roles",
+            message: "Choose new role for the employee",
+            choices: roles
+
+        }
+
+    ])
+    .then(async(answers) => {
+
+        
+        let array = answers.update.split(' ');
+        let roleID = await getRoleID(connection, answers.role);
+        const sqlQuery = "UPDATE employee SET ? WHERE ? AND ?"
+        const params = [{role_id:roleID}, {first_name:array[0]}, {last_name:array[1]}]
+
+        const [rows, fields] = await connection.query(sqlQuery, params);
+        console.log(rows);
+    })
+}
+
+const getEmployees = async (connection) => {
+
+    const[rows,fields] = await connection.query("SELECT first_name, last_name FROM employee");
+    //map applies a function you define to each element in the array
+    let employees = rows.map((item) => { return (`${item.first_name} ${item.last_name}`)});
+   
+    return employees;
+}
