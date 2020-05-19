@@ -42,8 +42,11 @@ const main = async () => {
         })
         console.log(`Connected to database with ID ${connection.threadId}`);
 
+            //how to get rid of index?
         //await viewEmployees(connection);
-        await addEmployee(connection);
+        await viewRoles(connection);
+            //has issue with answer options
+        //await addEmployee(connection);  
         //await practice(connection);
         //await getRoles(connection);
 
@@ -57,18 +60,21 @@ const main = async () => {
 
 main();
 
+// View Employees
 const viewEmployees = async (connection) => {
 
-//     SELECT Orders.OrderID, Customers.CustomerName, Shippers.ShipperName
-// FROM ((Orders
-// INNER JOIN Customers ON Orders.CustomerID = Customers.CustomerID)
-// INNER JOIN Shippers ON Orders.ShipperID = Shippers.ShipperID);
+    const[rows,fields] = await connection.query("SELECT employee.id,employee.first_name,employee.last_name,role.title,department.name,role.salary FROM role INNER JOIN employee ON role.id = employee.role_id INNER JOIN department ON role.department_id = department.id");
+    console.table(rows);
+}
+// View Roles
+const viewRoles = async (connection) => {
 
-    const[rows,fields] = await connection.query("SELECT employee.id,employee.first_name,employee.last_name,role.title,department.name,role.salary FROM role INNER JOIN employee ON role.id = employee.role_id INNER JOIN department ON role.department_id = department.id INNER JOIN Manager ON role.id = Manager.role_id");
+    const[rows,fields] = await connection.query("SELECT role.id,title,salary,name FROM role INNER JOIN department ON role.department_id = department.id");
     console.table(rows);
 }
 
 const addEmployee = async(connection) => {
+    
     let roles = await getRoles(connection);
     
     await inquirer.prompt([    //Do I need 'return or await'?
@@ -84,7 +90,7 @@ const addEmployee = async(connection) => {
             message: "What is the employee's last name?"
         },
         {
-            type: "rawlist",
+            type: "list",
             name: "role",
             message: "What is the employee's role?",
             choices: roles
@@ -104,7 +110,7 @@ const addEmployee = async(connection) => {
 
     console.log(rows);
 
-    //sales, finance engineer  
+    
     })
 
 
