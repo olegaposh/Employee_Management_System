@@ -44,11 +44,13 @@ const main = async () => {
 
             //how to get rid of index?
         //await viewEmployees(connection);
-        await viewRoles(connection);
+        //await viewRoles(connection);
             //has issue with answer options
         //await addEmployee(connection);  
+        await addRole(connection);
         //await practice(connection);
         //await getRoles(connection);
+        //await getDepartments(connection);
 
 
 
@@ -66,7 +68,7 @@ const viewEmployees = async (connection) => {
     const[rows,fields] = await connection.query("SELECT employee.id,employee.first_name,employee.last_name,role.title,department.name,role.salary FROM role INNER JOIN employee ON role.id = employee.role_id INNER JOIN department ON role.department_id = department.id");
     console.table(rows);
 }
-// View Roles
+// View Roles/depts
 const viewRoles = async (connection) => {
 
     const[rows,fields] = await connection.query("SELECT role.id,title,salary,name FROM role INNER JOIN department ON role.department_id = department.id");
@@ -109,16 +111,46 @@ const addEmployee = async(connection) => {
     const [rows, fields] = await connection.query(sqlQuery, params);
 
     console.log(rows);
-
-    
     })
+}
 
+const addRole = async(connection) => {
+    
+    let departments = await getDepartments(connection);
+    
+    await inquirer.prompt([    //Do I need 'return or await'?
 
+        {
+            type: "input",
+            name: "title",
+            message: "What is the title of the new role?"
+        },
+        {
+            type: "input",
+            name: "salary",
+            message: "What is the salary of this new role?"
+        },
+        {
+            type: "list",
+            name: "dept",
+            message: "What department does this role belong to?",
+            choices: departments
+        }
+    ])
+    .then(async (answers) => {
+
+    let deptID = await getDeptID(connection, answers.dept);
+    const params = {title:answers.title, salary:answers.salary, department_id:deptID}
+    const sqlQuery = "INSERT INTO role SET ?"
+    const [rows, fields] = await connection.query(sqlQuery, params);
+
+    console.log(rows);
+    })
 }
 
 const getRoleID = async (connection, role) => {
 
-
+//whats the ID of the chosen role (sales/finance/engineer)
     const sqlQuery = "SELECT id FROM role WHERE ?"
     const params = {title: role}
 
@@ -142,8 +174,33 @@ const practice = async (connection) => {
 const getRoles = async (connection) => {
 
     const[rows,fields] = await connection.query("SELECT title FROM role");
+    
     // map applies a function you define to each element in the array
     let titles = rows.map((item) => { return item.title });
    // console.log(titles);
    return titles;
 }
+
+const getDepartments = async (connection) => {
+
+    const[rows,fields] = await connection.query("SELECT name FROM department");
+    
+    //map applies a function you define to each element in the array
+    let deptName = rows.map((item) => { return item.name });
+   // console.log(titles);
+    return deptName;
+
+}
+
+const getDeptID = async (connection, dept) => {
+
+    //whats the ID of the chosen Department (Marketing/Treasury/R&D)
+        const sqlQuery = "SELECT id FROM department WHERE ?"
+        const params = {name: dept}
+    
+        const [rows, fields] = await connection.query(sqlQuery, params);
+    
+        return rows[0].id;
+        
+    }
+    
