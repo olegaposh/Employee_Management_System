@@ -221,7 +221,7 @@ const updateEmployeeRole = async (connection) => {
         },
         {
             type: "list",
-            name: "roles",
+            name: "role",
             message: "Choose new role for the employee",
             choices: roles
 
@@ -230,14 +230,15 @@ const updateEmployeeRole = async (connection) => {
     ])
     .then(async(answers) => {
 
-        
+        //UPDATE employee SET role_id=4 WHERE first_name="Alex" AND last_name="Posh"
         let array = answers.update.split(' ');
         let roleID = await getRoleID(connection, answers.role);
+        //const Query = `UPDATE employee SET role_id=${roleID} WHERE first_name=${array[0]} AND last_name=${array[1]}`
         const sqlQuery = "UPDATE employee SET ? WHERE ? AND ?"
         const params = [{role_id:roleID}, {first_name:array[0]}, {last_name:array[1]}]
 
         const [rows, fields] = await connection.query(sqlQuery, params);
-        console.log(rows);
+        console.log(`${answers.update} is now a ${answers.role}!`);
     })
 }
 
