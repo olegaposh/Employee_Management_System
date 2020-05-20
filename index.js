@@ -39,47 +39,55 @@ main();
 
 // Main functions
 
-function userPrompt(connection) {
+const userPrompt = async (connection) => {
     return inquirer.prompt({
 
         type: "list",
         name: "menu",
         message: "What would you like to do?",
-        choices:["View All","View Employees","View Roles","View Departments","Add Employee","Add Role","Add Department","Update Employee Role","Exit"]
+        choices:["View All","View Employees","View Roles","View Departments","Add Employee","Add Role","Add Department","Update Employee Role"]
     })
     .then(async(response) => {
 
         switch (response.menu) {
 
             case "View All":
+                console.log("         *****-------------------- View All --------------------*****");
                 await viewAll(connection);
                 break;
 
             case "View Employees":
+                console.log("         *****-------------------- View Employees --------------------*****");
                 await viewEmployees(connection);
                 break;
             
             case "View Roles":
+                console.log("         *****-------------------- View Roles --------------------*****");
                 await viewRoles(connection);
                 break;
 
             case "View Departments":
+                console.log("         *****-------------------- View Departments --------------------*****");
                 await viewDepts(connection);
                 break;
             
             case "Add Employee":
+                console.log("         *****-------------------- Add Employee --------------------*****");
                 await addEmployee(connection);
                 break;
 
             case "Add Role":
+                console.log("         *****-------------------- Add Role --------------------*****");
                 await addRole(connection);
                 break;
 
             case "Add Department":
+                console.log("         *****-------------------- Add Department --------------------*****");
                 await addDept(connection);
                 break;
 
             case "Update Employee Role":
+                console.log("         *****-------------------- Update Employee Role --------------------*****");
                 await updateEmployeeRole(connection);
                 break;
 
@@ -235,7 +243,7 @@ const updateEmployeeRole = async (connection) => {
     ])
     .then(async(answers) => {
 
-        //UPDATE employee SET role_id=4 WHERE first_name="Alex" AND last_name="Posh"
+        
         let array = answers.update.split(' ');
         let roleID = await getRoleID(connection, answers.role);
         //const Query = `UPDATE employee SET role_id=${roleID} WHERE first_name=${array[0]} AND last_name=${array[1]}`
@@ -243,7 +251,7 @@ const updateEmployeeRole = async (connection) => {
         const params = [{role_id:roleID}, {first_name:array[0]}, {last_name:array[1]}]
 
         const [rows, fields] = await connection.query(sqlQuery, params);
-        console.log(`${answers.update} is now a ${answers.role}!`);
+        console.log(`${answers.update} is now in a ${answers.role} role!`);
     })
 }
 
