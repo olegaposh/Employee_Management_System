@@ -1,7 +1,6 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql2/promise');
 
-
 const main = async () => {
 
     try {
@@ -15,6 +14,7 @@ const main = async () => {
         })
         console.log(`Connected to database with ID ${connection.threadId}`);
 
+        await userPrompt(connection);
         //how to get rid of index? when to use try?
 
         //await viewAll(connection);
@@ -35,7 +35,60 @@ const main = async () => {
 
 main();
 
+
+
 // Main functions
+
+function userPrompt(connection) {
+    return inquirer.prompt({
+
+        type: "list",
+        name: "menu",
+        message: "What would you like to do?",
+        choices:["View All","View Employees","View Roles","View Departments","Add Employee","Add Role","Add Department","Update Employee Role","Exit"]
+    })
+    .then(async(response) => {
+
+        switch (response.menu) {
+
+            case "View All":
+                await viewAll(connection);
+                break;
+
+            case "View Employees":
+                await viewEmployees(connection);
+                break;
+            
+            case "View Roles":
+                await viewRoles(connection);
+                break;
+
+            case "View Departments":
+                await viewDepts(connection);
+                break;
+            
+            case "Add Employee":
+                await addEmployee(connection);
+                break;
+
+            case "Add Role":
+                await addRole(connection);
+                break;
+
+            case "Add Department":
+                await addDept(connection);
+                break;
+
+            case "Update Employee Role":
+                await updateEmployeeRole(connection);
+                break;
+
+        }
+
+        await userPrompt(connection)
+
+    })
+}
 
 const viewAll = async (connection) => {
 
