@@ -14,7 +14,7 @@ const main = async () => {
         })
         console.log(`Connected to database with ID ${connection.threadId}`);
 
-        await userPrompt(connection);
+        //await userPrompt(connection);
         //how to get rid of index? when to use try?
 
         //await viewAll(connection);
@@ -26,6 +26,7 @@ const main = async () => {
         //await addDept(connection);
         //await updateEmployeeRole(connection)
         //await deleteEmployee(connection)
+        //await deleteDept(connection);
         
         //connection.end();
     } catch (err) {
@@ -341,5 +342,29 @@ const deleteEmployee = async(connection) => {
     const [rows, fields] = await connection.query(sqlQuery, params);
 
     console.log(`${answers.remove} has been removed.`);
+    })
+}
+
+const deleteDept = async(connection) => {
+    
+    let depts = await getDepartments(connection);
+    
+    await inquirer.prompt(    
+
+        {
+            type: "list",
+            name: "delDept",
+            message: "Which department would you like to remove?",
+            choices: depts
+        }
+    )
+    .then(async (answers) => {
+    
+    const sqlQuery = "DELETE FROM department WHERE ?"
+    const params = {dept_name:answers.delDept}
+
+    const [rows, fields] = await connection.query(sqlQuery, params);
+
+    console.log(`${answers.delDept} department has been removed.`);
     })
 }
