@@ -25,8 +25,9 @@ const main = async () => {
         //await addRole(connection);
         //await addDept(connection);
         //await updateEmployeeRole(connection)
+        //await deleteEmployee(connection)
         
-        connection.end();
+        //connection.end();
     } catch (err) {
         console.log(err);
     }
@@ -45,7 +46,7 @@ const userPrompt = async (connection) => {
         type: "list",
         name: "menu",
         message: "What would you like to do?",
-        choices:["View All","View Employees","View Roles","View Departments","Add Employee","Add Role","Add Department","Update Employee Role"]
+        choices:["View All","View Employees","View Roles","View Departments","Add Employee","Add Role","Add Department","Update Employee Role","Remove Employee"]
     })
     .then(async(response) => {
 
@@ -91,6 +92,11 @@ const userPrompt = async (connection) => {
                 await updateEmployeeRole(connection);
                 break;
 
+            case "Remove Employee":
+                console.log("         *****-------------------- Remove Employee --------------------*****");
+                await deleteEmployee(connection);
+                break;
+            
         }
 
         await userPrompt(connection)
@@ -310,4 +316,30 @@ const getEmployees = async (connection) => {
     let employees = rows.map((item) => { return (`${item.first_name} ${item.last_name}`)});
    
     return employees;
+}
+
+const deleteEmployee = async(connection) => {
+    
+    let employees = await getEmployees(connection);
+    
+    await inquirer.prompt([   
+
+        {
+            type: "list",
+            name: "remove",
+            message: "Which employee would you like to remove?",
+            choices: employees
+        }
+        
+    ])
+    .then(async (answers) => {
+    
+    let array = answers.remove.split(' ');
+    const sqlQuery = "DELETE FROM employee WHERE ? and ?"
+    const params = [{first_name: array[0]}, {last_name: array[1]}]
+
+    const [rows, fields] = await connection.query(sqlQuery, params);
+
+    console.log(`${answers.remove} has been removed.`);
+    })
 }
