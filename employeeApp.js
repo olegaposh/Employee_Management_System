@@ -14,7 +14,7 @@ const main = async () => {
         })
         console.log(`Connected to database with ID ${connection.threadId}`);
 
-        //await userPrompt(connection);
+        await userPrompt(connection);
         //how to get rid of index? when to use try?
 
         //await viewAll(connection);
@@ -27,6 +27,7 @@ const main = async () => {
         //await updateEmployeeRole(connection)
         //await deleteEmployee(connection)
         //await deleteDept(connection);
+        //await deleteRole(connection)
         
         //connection.end();
     } catch (err) {
@@ -47,7 +48,7 @@ const userPrompt = async (connection) => {
         type: "list",
         name: "menu",
         message: "What would you like to do?",
-        choices:["View All","View Employees","View Roles","View Departments","Add Employee","Add Role","Add Department","Update Employee Role","Remove Employee"]
+        choices:["View All","View Employees","View Roles","View Departments","Add Employee","Add Role","Add Department","Update Employee Role","Remove Employee","Remove Role","Remove Department"]
     })
     .then(async(response) => {
 
@@ -97,6 +98,16 @@ const userPrompt = async (connection) => {
                 console.log("         *****-------------------- Remove Employee --------------------*****");
                 await deleteEmployee(connection);
                 break;
+
+            case "Remove Role":
+            console.log("         *****-------------------- Remove Role --------------------*****");
+            await deleteRole(connection);
+            break;
+
+            case "Remove Department":
+            console.log("         *****-------------------- Remove Department --------------------*****");
+            await deleteDept(connection);
+            break;
             
         }
 
@@ -165,7 +176,7 @@ const addEmployee = async(connection) => {
 
     const [rows, fields] = await connection.query(sqlQuery, params);
 
-    console.log(`${answers.first_name} ${answers.last_name} has been added`);
+    console.log(`*${answers.first_name} ${answers.last_name} has been added*`);
     })
 }
 
@@ -199,7 +210,7 @@ const addRole = async(connection) => {
     const sqlQuery = "INSERT INTO role SET ?"
     const [rows, fields] = await connection.query(sqlQuery, params);
 
-    console.log(`The ${answers.title} role has been added`);
+    console.log(`*The ${answers.title} role has been added*`);
     })
 }
 
@@ -222,7 +233,7 @@ const addDept = async(connection) => {
 
     const [rows, fields] = await connection.query(sqlQuery, params);
 
-    console.log(`${answers.newDept} has been added!`);
+    console.log(`*${answers.newDept} has been added!*`);
     })
 }
 
@@ -258,7 +269,7 @@ const updateEmployeeRole = async (connection) => {
         const params = [{role_id:roleID}, {first_name:array[0]}, {last_name:array[1]}]
 
         const [rows, fields] = await connection.query(sqlQuery, params);
-        console.log(`${answers.update} is now in a ${answers.role} role!`);
+        console.log(`*${answers.update} is now in a ${answers.role} role.*`);
     })
 }
 
@@ -341,7 +352,7 @@ const deleteEmployee = async(connection) => {
 
     const [rows, fields] = await connection.query(sqlQuery, params);
 
-    console.log(`${answers.remove} has been removed.`);
+    console.log(`*${answers.remove} has been removed.*`);
     })
 }
 
@@ -365,6 +376,29 @@ const deleteDept = async(connection) => {
 
     const [rows, fields] = await connection.query(sqlQuery, params);
 
-    console.log(`${answers.delDept} department has been removed.`);
+    console.log(`*${answers.delDept} department has been removed.*`);
+    })
+}
+
+const deleteRole = async(connection) => {
+    
+    let roles = await getRoles(connection);
+    
+    await inquirer.prompt([ 
+
+        {
+            type: "list",
+            name: "delRole",
+            message: "Which role would you like to remove?",
+            choices: roles
+        }
+    ])
+    .then(async (answers) => {
+
+    const sqlQuery = "DELETE FROM Role WHERE ?";
+    const params = {title:answers.delRole};
+    const [rows, fields] = await connection.query(sqlQuery, params);
+
+    console.log(`*The ${answers.delRole} role has been removed.*`);
     })
 }
