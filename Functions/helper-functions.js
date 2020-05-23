@@ -57,18 +57,29 @@ const getEmployees = async (connection) => {
 
 const getManagers = async (connection) => {
 
-    const[rows,fields] = await connection.query("SELECT mgr_name FROM manager");
     
-    //map applies a function you define to each element in the array
-    let mgrName = rows.map((item) => { return item.mgr_name });
-    //console.log(mgrName);
-    return mgrName;
+    const[rows,fields] = await connection.query("SELECT first_name, last_name FROM employee WHERE manager_id IS NULL");
+    let managers = rows.map((item) => { return (`${item.first_name} ${item.last_name}`)});
+    return managers;
+   
 
 }
+const getManagerID = async (connection, mgr_first,mgr_last) => {
 
+    //whats the ID of the chosen role (sales/finance/engineer)
+        const sqlQuery = "SELECT emp_id FROM employee WHERE ? AND ?"
+        const params = [{first_name:mgr_first},{last_name:mgr_last}]
+    
+        const [rows, fields] = await connection.query(sqlQuery, params);
+        console.log(rows)
+        return rows[0].emp_id;
+        
+    }
 
 exports.getRoleID = getRoleID;
 exports.getRoles = getRoles;
 exports.getDepartments = getDepartments;
 exports.getDeptID = getDeptID;
 exports.getEmployees = getEmployees;
+exports.getManagers = getManagers;
+exports.getManagerID = getManagerID;

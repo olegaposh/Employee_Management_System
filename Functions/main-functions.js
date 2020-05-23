@@ -106,12 +106,12 @@ const viewDepts = async (connection) => {
 
 const addEmployee = async(connection) => {
     
-    let roles = await help.getRoles(connection);
-
-    let managers;
-    // I am the manger
+    let roles = await help.getRoles(connection)
+    let managers = await help.getManagers(connection)
+    managers.push(new inquirer.Separator(), "None")
+    //managers.push("None")
     
-    await inquirer.prompt([    //Do I need 'return or await'?
+    await inquirer.prompt([    
 
         {
             type: "input",
@@ -129,20 +129,31 @@ const addEmployee = async(connection) => {
             message: "What is the employee's role?",
             choices: roles
         },
-        // 
-        // {
-        //     type: "input",
-        //     name: "employee_manager",
-        //     message: "Who is the employees's manager?"
-                //choices: managers
-        // }
+        
+        {
+            type: "list",
+            name: "emp_mgr",
+            message: "Who is the employees's manager?",
+            choices: managers
+        }
     ])
     .then(async (answers) => {
-    let roleID = await help.getRoleID(connection, answers.role);
-    const sqlQuery = "INSERT INTO employee SET ?"
-    const params = {first_name:answers.first_name, last_name:answers.last_name, role_id:roleID}
 
-    const [rows, fields] = await connection.query(sqlQuery, params);
+        let roleID = await help.getRoleID(connection, answers.role);
+        const sqlQuery = "INSERT INTO employee SET ?"
+        
+        if (answers.emp_mgr === "None") {
+            // creating a manager with a manager_id: null 
+        const params = {first_name:answers.first_name, last_name:answers.last_name, role_id:roleID}
+        const [rows, fields] = await connection.query(sqlQuery, params);
+        }
+        else {
+            // creating a employee
+            let mgr_array = answers.emp_mgr.split(' ');
+            let mgrEmpID = await help.getManagerID(connection, mgr_array[0],mgr_array[1])
+            const params = {first_name:answers.first_name, last_name:answers.last_name, role_id:roleID, manager_id:mgrEmpID}
+            const [rows, fields] = await connection.query(sqlQuery, params);
+        }
 
     console.log(`*${answers.first_name} ${answers.last_name} has been added*`);
     })

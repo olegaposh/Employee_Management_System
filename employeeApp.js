@@ -1,7 +1,8 @@
-const inquirer = require('inquirer');
+//const inquirer = require('inquirer');
 const mysql = require('mysql2/promise');
-const cTable = require('console.table');
+//const cTable = require('console.table');
 const functions = require('./Functions/main-functions')
+const help = require('./Functions/helper-functions')
 
 const main = async () => {
 
@@ -30,7 +31,8 @@ const main = async () => {
         //await deleteEmployee(connection)
         //await deleteDept(connection);
         //await deleteRole(connection)
-        //await getManagers(connection)
+        //await help.getManagers(connection)
+        //await help.getManagerID(connection)
         
         //connection.end();
     } catch (err) {
