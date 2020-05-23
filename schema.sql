@@ -26,11 +26,6 @@ dept_name VARCHAR(30)
 );
 
 
-CREATE TABLE manager (
-mgr_id INTEGER AUTO_INCREMENT NOT NULL,
-PRIMARY KEY(mgr_id),
-mgr_name VARCHAR(30)
-);
 
 
 

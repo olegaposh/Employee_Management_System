@@ -1,12 +1,13 @@
 INSERT INTO employee (first_name,last_name,role_id,manager_id)
-VALUES("John","Doe",1,1),("Fred","Breath",2,1),("Mary","Jane",3,2),
-("Jonny","Boy",1,2),("Jackie","Chan",3,2);
+VALUES("Gary","Oak",2,7),("Severus","Snape",3,11),("Ash","Ketchup",4,7),
+("Rick","Sanchez",6,11),("Jackie","Chan",5,11),("Tom","Cruise",5,11),("Barack","Obama",8,null),
+("Adam","Sandler",3,7),("Harry","Potter",6,11),("Hermione","Granger",1,7),
+("Spongebob","Squarepants",7,null),("Johnny","Bravo",3,11);
 
 INSERT INTO role (title,salary,department_id)
-VALUES("Sales",75000,1),("Finance",90000,2),("Engineer",105000,3);
+VALUES("Marketing Analyst",95000,1),("Sales Executive",90000,2),
+("Sales Associate",70000,2),("Business Analyst",85000,4),("Engineer I",110000,5),
+("Engineer II",150000,5),("Vice President",240000,6),("CEO",350000,6);
 
 INSERT INTO department (dept_name)
-VALUES("Marketing"),("Treasury"),("R&D");
-
-INSERT INTO manager (mgr_name)
-VALUES("Karen Shmearen"),("Susan Bruisen");
+VALUES("Marketing"),("Sales"),("Finance"),("Business Strategy"),("Engineering"),("Executive");
