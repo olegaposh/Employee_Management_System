@@ -74,7 +74,7 @@ const getManagerID = async (connection, mgr_first,mgr_last) => {
         console.log(rows)
         return rows[0].emp_id;
         
-    }
+}
 
 exports.getRoleID = getRoleID;
 exports.getRoles = getRoles;

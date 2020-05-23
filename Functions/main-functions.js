@@ -3,7 +3,7 @@ const inquirer = require('inquirer');
 const cTable = require('console.table');
 
 
-// Main functions
+// Menu functions
 
 const userPrompt = async (connection) => {
     return inquirer.prompt({
@@ -11,16 +11,11 @@ const userPrompt = async (connection) => {
         type: "list",
         name: "menu",
         message: "What would you like to do?",
-        choices:["View All","View Employees","View Roles","View Departments","Add Employee","Add Role","Add Department","Update Employee Role","Remove Employee","Remove Role","Remove Department"]
+        choices:["View Employees","View Roles","View Departments","Add Employee","Add Role","Add Department","Update Employee Role","Remove Employee","Remove Role","Remove Department"]
     })
     .then(async(response) => {
 
         switch (response.menu) {
-
-            case "View All":
-                console.log("         *****-------------------- View All --------------------*****");
-                await viewAll(connection);
-                break;
 
             case "View Employees":
                 console.log("         *****-------------------- View Employees --------------------*****");
@@ -79,27 +74,21 @@ const userPrompt = async (connection) => {
     })
 }
 
-const viewAll = async (connection) => {
-
-    const[rows,fields] = await connection.query("SELECT e.emp_id,e.first_name,e.last_name,r.title,department.dept_name,r.salary,mgr_name FROM role r INNER JOIN employee e ON r.role_id = e.role_id INNER JOIN department ON r.department_id = department.dept_id INNER JOIN manager ON e.manager_id = manager.mgr_id");
-    console.table(rows);
-}
-
 const viewEmployees = async (connection) => {
 
-    const[rows,fields] = await connection.query("SELECT emp_id,first_name,last_name FROM employee");
+    const[rows,fields] = await connection.query("SELECT e.emp_id,e.first_name,e.last_name,title,dept_name,r.salary, CONCAT(m.first_name, ' ',m.last_name) AS manager FROM employee e LEFT JOIN employee m ON e.manager_id = m.emp_id INNER JOIN role r ON e.role_id = r.role_id INNER JOIN department d ON r.department_id = d.dept_id");
     console.table(rows);
 }
 
 const viewRoles = async (connection) => {
 
-    const[rows,fields] = await connection.query("SELECT role_id,title,salary FROM role");
+    const[rows,fields] = await connection.query("SELECT role_id,title,salary,dept_name FROM role INNER JOIN department ON role.department_id = dept_id");
     console.table(rows);
 }
 
 const viewDepts = async (connection) => {
 
-    const[rows,fields] = await connection.query("SELECT dept_id,dept_name FROM department");
+    const[rows,fields] = await connection.query("SELECT * FROM department");
     console.table(rows);
 }
 
@@ -326,7 +315,6 @@ const deleteRole = async(connection) => {
 }
 
 exports.userPrompt = userPrompt;
-exports.viewAll = viewAll;
 exports.viewEmployees = viewEmployees;
 exports.viewRoles = viewRoles;
 exports.viewDepts = viewDepts;
