@@ -1,11 +1,58 @@
-<iframe src="https://drive.google.com/file/d/19kfTMwu4aMieNpZM1Uya59m9noV9lR1d/preview" width="640" height="480"></iframe>
+
+    # Employee_Management_System
+
+    Table of Contents:
+
+  - [Demo](#Demo)
+  
+  - [Description](#description)
+  
+  - [Installation](#installation)
+  
+  - [Usage](#usage)
+  
+  - [Contributing](#contributing)
+  
 
 
-[!<iframe src="https://drive.google.com/file/d/19kfTMwu4aMieNpZM1Uya59m9noV9lR1d/preview" width="640" height="480"></iframe>]
+  ## Demo:
 
-[Click Here]([!<iframe src="https://drive.google.com/file/d/19kfTMwu4aMieNpZM1Uya59m9noV9lR1d/preview" width="640" height="480"></iframe>]
-)
+    [Click Here](https://drive.google.com/file/d/19kfTMwu4aMieNpZM1Uya59m9noV9lR1d/view)
+    
+  
+  ## Description:
+  
+    
+  
+  A CLI based employee manager system that completes your essnetial CRUD functions. 
+  
+     
+  
+  ## Installation:
+  
+    
+  
+  npm install
+  
+    
+  
+  ## Usage:
+  
+    
+  
+As a business owner:
+I want to be able to view and manage the departments, roles, and employees in my company
+So that I can organize and plan my business  
+  
+  
+  ## Contributing:
+  
+    
+  
+  Alex Poshivailo
 
 
-[CLick Here](https://drive.google.com/file/d/19kfTMwu4aMieNpZM1Uya59m9noV9lR1d/view)
 
+
+
+  
