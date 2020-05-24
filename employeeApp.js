@@ -16,23 +16,7 @@ const main = async () => {
         console.log(`Connected to database with ID ${connection.threadId}`);
 
         await functions.userPrompt(connection);
-        //how to get rid of index? when to use try?
-
-        //await viewAll(connection);
-        //await viewEmployees(connection);
-        //await viewRoles(connection);
-        //await viewDepts(connection)
-        //await addEmployee(connection);  
-        //await addRole(connection);
-        //await addDept(connection);
-        //await updateEmployeeRole(connection)
-        //await deleteEmployee(connection)
-        //await deleteDept(connection);
-        //await deleteRole(connection)
-        //await help.getManagers(connection)
-        //await help.getManagerID(connection)
         
-        //connection.end();
     } catch (err) {
         console.log(err);
     }

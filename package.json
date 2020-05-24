@@ -4,7 +4,7 @@
   "description": "SQL",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -20,6 +20,8 @@
   "dependencies": {
     "console.table": "^0.10.0",
     "inquirer": "^7.1.0",
+    "jest": "^26.0.1",
     "mysql2": "^2.1.0"
   }
 }
+

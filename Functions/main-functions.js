@@ -11,7 +11,7 @@ const userPrompt = async (connection) => {
         type: "list",
         name: "menu",
         message: "What would you like to do?",
-        choices:["View Employees","View Roles","View Departments","Add Employee","Add Role","Add Department","Update Employee Role","Remove Employee","Remove Role","Remove Department"]
+        choices:["View Employees","View Employees by Manager","View Roles","View Departments","View Utilized Budget","Add Employee","Add Role","Add Department","Update Employee Role","Remove Employee","Remove Role","Remove Department"]
     })
     .then(async(response) => {
 
@@ -20,6 +20,11 @@ const userPrompt = async (connection) => {
             case "View Employees":
                 console.log("         *****-------------------- View Employees --------------------*****");
                 await viewEmployees(connection);
+                break;
+
+            case "View Employees by Manager":
+                console.log("         *****-------------------- View Employees --------------------*****");
+                await viewEmpByMgr(connection);
                 break;
             
             case "View Roles":
@@ -30,6 +35,11 @@ const userPrompt = async (connection) => {
             case "View Departments":
                 console.log("         *****-------------------- View Departments --------------------*****");
                 await viewDepts(connection);
+                break;
+
+            case "View Utilized Budget":
+                console.log("         *****-------------------- View Utilized Budget --------------------*****");
+                await viewUtilizedBudget(connection);
                 break;
             
             case "Add Employee":
@@ -79,6 +89,11 @@ const viewEmployees = async (connection) => {
     const[rows,fields] = await connection.query("SELECT e.emp_id,e.first_name,e.last_name,title,dept_name,r.salary, CONCAT(m.first_name, ' ',m.last_name) AS manager FROM employee e LEFT JOIN employee m ON e.manager_id = m.emp_id INNER JOIN role r ON e.role_id = r.role_id INNER JOIN department d ON r.department_id = d.dept_id");
     console.table(rows);
 }
+const viewEmpByMgr = async (connection) => {
+
+    const[rows,fields] = await connection.query("SELECT CONCAT(e.first_name,' ',e.last_name) AS employee,CONCAT(m.first_name,' ',m.last_name) AS manager FROM employee e INNER JOIN employee m ON e.manager_id = m.emp_id ORDER BY m.first_name");
+    console.table(rows);
+}
 
 const viewRoles = async (connection) => {
 
@@ -91,7 +106,11 @@ const viewDepts = async (connection) => {
     const[rows,fields] = await connection.query("SELECT * FROM department");
     console.table(rows);
 }
+const viewUtilizedBudget = async (connection) => {
 
+    const[rows,fields] = await connection.query("SELECT dept_name, sum(salary) AS utilized_budget FROM employee e LEFT JOIN employee m ON e.manager_id = m.emp_id INNER JOIN role r ON e.role_id = r.role_id INNER JOIN department d ON r.department_id = d.dept_id GROUP BY dept_name");
+    console.table(rows);
+}
 
 const addEmployee = async(connection) => {
     
@@ -316,8 +335,10 @@ const deleteRole = async(connection) => {
 
 exports.userPrompt = userPrompt;
 exports.viewEmployees = viewEmployees;
+exports.viewEmpByMgr = viewEmpByMgr;
 exports.viewRoles = viewRoles;
 exports.viewDepts = viewDepts;
+exports.viewUtilizedBudget = viewUtilizedBudget;
 exports.addEmployee = addEmployee;
 exports.addRole = addRole;
 exports.addDept = addDept;
