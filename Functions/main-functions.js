@@ -11,120 +11,120 @@ const userPrompt = async (connection) => {
         type: "list",
         name: "menu",
         message: "What would you like to do?",
-        choices:["View Employees","View Employees by Manager","View Roles","View Departments","View Utilized Budget","Add Employee","Add Role","Add Department","Update Employee Role","Update Manager","Remove Employee","Remove Role","Remove Department"]
+        choices: ["View Employees", "View Employees by Manager", "View Roles", "View Departments", "View Utilized Budget", "Add Employee", "Add Role", "Add Department", "Update Employee Role", "Update Manager", "Remove Employee", "Remove Role", "Remove Department"]
     })
-    .then(async(response) => {
+        .then(async (response) => {
 
-        switch (response.menu) {
+            switch (response.menu) {
 
-            case "View Employees":
-                console.log("         *****-------------------- View Employees --------------------*****");
-                await viewEmployees(connection);
-                break;
+                case "View Employees":
+                    console.log("         *****-------------------- View Employees --------------------*****");
+                    await viewEmployees(connection);
+                    break;
 
-            case "View Employees by Manager":
-                console.log("         *****-------------------- View Employees --------------------*****");
-                await viewEmpByMgr(connection);
-                break;
-            
-            case "View Roles":
-                console.log("         *****-------------------- View Roles --------------------*****");
-                await viewRoles(connection);
-                break;
+                case "View Employees by Manager":
+                    console.log("         *****-------------------- View Employees --------------------*****");
+                    await viewEmpByMgr(connection);
+                    break;
 
-            case "View Departments":
-                console.log("         *****-------------------- View Departments --------------------*****");
-                await viewDepts(connection);
-                break;
+                case "View Roles":
+                    console.log("         *****-------------------- View Roles --------------------*****");
+                    await viewRoles(connection);
+                    break;
 
-            case "View Utilized Budget":
-                console.log("         *****-------------------- View Utilized Budget --------------------*****");
-                await viewUtilizedBudget(connection);
-                break;
-            
-            case "Add Employee":
-                console.log("         *****-------------------- Add Employee --------------------*****");
-                await addEmployee(connection);
-                break;
+                case "View Departments":
+                    console.log("         *****-------------------- View Departments --------------------*****");
+                    await viewDepts(connection);
+                    break;
 
-            case "Add Role":
-                console.log("         *****-------------------- Add Role --------------------*****");
-                await addRole(connection);
-                break;
+                case "View Utilized Budget":
+                    console.log("         *****-------------------- View Utilized Budget --------------------*****");
+                    await viewUtilizedBudget(connection);
+                    break;
 
-            case "Add Department":
-                console.log("         *****-------------------- Add Department --------------------*****");
-                await addDept(connection);
-                break;
+                case "Add Employee":
+                    console.log("         *****-------------------- Add Employee --------------------*****");
+                    await addEmployee(connection);
+                    break;
 
-            case "Update Employee Role":
-                console.log("         *****-------------------- Update Employee Role --------------------*****");
-                await updateEmployeeRole(connection);
-                break;
+                case "Add Role":
+                    console.log("         *****-------------------- Add Role --------------------*****");
+                    await addRole(connection);
+                    break;
 
-            case "Update Manager":
-            console.log("         *****-------------------- Update Manager --------------------*****");
-            await updateManager(connection);
-            break;
+                case "Add Department":
+                    console.log("         *****-------------------- Add Department --------------------*****");
+                    await addDept(connection);
+                    break;
 
-            case "Remove Employee":
-                console.log("         *****-------------------- Remove Employee --------------------*****");
-                await deleteEmployee(connection);
-                break;
+                case "Update Employee Role":
+                    console.log("         *****-------------------- Update Employee Role --------------------*****");
+                    await updateEmployeeRole(connection);
+                    break;
 
-            case "Remove Role":
-            console.log("         *****-------------------- Remove Role --------------------*****");
-            await deleteRole(connection);
-            break;
+                case "Update Manager":
+                    console.log("         *****-------------------- Update Manager --------------------*****");
+                    await updateManager(connection);
+                    break;
 
-            case "Remove Department":
-            console.log("         *****-------------------- Remove Department --------------------*****");
-            await deleteDept(connection);
-            break;
-            
-        }
+                case "Remove Employee":
+                    console.log("         *****-------------------- Remove Employee --------------------*****");
+                    await deleteEmployee(connection);
+                    break;
 
-        await userPrompt(connection)
+                case "Remove Role":
+                    console.log("         *****-------------------- Remove Role --------------------*****");
+                    await deleteRole(connection);
+                    break;
 
-    })
+                case "Remove Department":
+                    console.log("         *****-------------------- Remove Department --------------------*****");
+                    await deleteDept(connection);
+                    break;
+
+            }
+
+            await userPrompt(connection)
+
+        })
 }
 
 const viewEmployees = async (connection) => {
 
-    const[rows,fields] = await connection.query("SELECT e.emp_id,e.first_name,e.last_name,title,dept_name,r.salary, CONCAT(m.first_name, ' ',m.last_name) AS manager FROM employee e LEFT JOIN employee m ON e.manager_id = m.emp_id INNER JOIN role r ON e.role_id = r.role_id INNER JOIN department d ON r.department_id = d.dept_id");
+    const [rows, fields] = await connection.query("SELECT e.emp_id,e.first_name,e.last_name,title,dept_name,r.salary, CONCAT(m.first_name, ' ',m.last_name) AS manager FROM employee e LEFT JOIN employee m ON e.manager_id = m.emp_id INNER JOIN role r ON e.role_id = r.role_id INNER JOIN department d ON r.department_id = d.dept_id");
     console.table(rows);
 }
 const viewEmpByMgr = async (connection) => {
 
-    const[rows,fields] = await connection.query("SELECT CONCAT(e.first_name,' ',e.last_name) AS employee,CONCAT(m.first_name,' ',m.last_name) AS manager FROM employee e INNER JOIN employee m ON e.manager_id = m.emp_id ORDER BY m.first_name");
+    const [rows, fields] = await connection.query("SELECT CONCAT(e.first_name,' ',e.last_name) AS employee,CONCAT(m.first_name,' ',m.last_name) AS manager FROM employee e INNER JOIN employee m ON e.manager_id = m.emp_id ORDER BY m.first_name");
     console.table(rows);
 }
 
 const viewRoles = async (connection) => {
 
-    const[rows,fields] = await connection.query("SELECT role_id,title,salary,dept_name FROM role INNER JOIN department ON role.department_id = dept_id");
+    const [rows, fields] = await connection.query("SELECT role_id,title,salary,dept_name FROM role INNER JOIN department ON role.department_id = dept_id");
     console.table(rows);
 }
 
 const viewDepts = async (connection) => {
 
-    const[rows,fields] = await connection.query("SELECT * FROM department");
+    const [rows, fields] = await connection.query("SELECT * FROM department");
     console.table(rows);
 }
 const viewUtilizedBudget = async (connection) => {
 
-    const[rows,fields] = await connection.query("SELECT dept_name, sum(salary) AS utilized_budget FROM employee e LEFT JOIN employee m ON e.manager_id = m.emp_id INNER JOIN role r ON e.role_id = r.role_id INNER JOIN department d ON r.department_id = d.dept_id GROUP BY dept_name");
+    const [rows, fields] = await connection.query("SELECT dept_name, sum(salary) AS utilized_budget FROM employee e LEFT JOIN employee m ON e.manager_id = m.emp_id INNER JOIN role r ON e.role_id = r.role_id INNER JOIN department d ON r.department_id = d.dept_id GROUP BY dept_name");
     console.table(rows);
 }
 
-const addEmployee = async(connection) => {
-    
+const addEmployee = async (connection) => {
+
     let roles = await help.getRoles(connection)
     let managers = await help.getManagers(connection)
     managers.push(new inquirer.Separator(), "None")
     //managers.push("None")
-    
-    await inquirer.prompt([    
+
+    await inquirer.prompt([
 
         {
             type: "input",
@@ -142,7 +142,7 @@ const addEmployee = async(connection) => {
             message: "What is the employee's role?",
             choices: roles
         },
-        
+
         {
             type: "list",
             name: "emp_mgr",
@@ -150,32 +150,36 @@ const addEmployee = async(connection) => {
             choices: managers
         }
     ])
-    .then(async (answers) => {
+        .then(async (answers) => {
 
-        let roleID = await help.getRoleID(connection, answers.role);
-        const sqlQuery = "INSERT INTO employee SET ?"
-        
-        if (answers.emp_mgr === "None") {
+            let roleID = await help.getRoleID(connection, answers.role);
+            const sqlQuery = "INSERT INTO employee SET ?"
             // creating a manager with a manager_id: null 
-        const params = {first_name:answers.first_name, last_name:answers.last_name, role_id:roleID}
-        const [rows, fields] = await connection.query(sqlQuery, params);
-        }
-        else {
-            // creating a employee
-            let mgr_array = answers.emp_mgr.split(' ');
-            let mgrEmpID = await help.getManagerID(connection, mgr_array[0],mgr_array[1])
-            const params = {first_name:answers.first_name, last_name:answers.last_name, role_id:roleID, manager_id:mgrEmpID}
-            const [rows, fields] = await connection.query(sqlQuery, params);
-        }
 
-    console.log(`*${answers.first_name} ${answers.last_name} has been added*`);
-    })
+            if (answers.emp_mgr === "None") {
+
+                const params = { first_name: answers.first_name, last_name: answers.last_name, role_id: roleID }
+                const [rows, fields] = await connection.query(sqlQuery, params);
+                console.log(`***${answers.first_name} ${answers.last_name} has been added an an manager.***`);
+            }
+            // creating a employee
+            else {
+
+                let mgr_array = answers.emp_mgr.split(' ');
+                let mgrEmpID = await help.getManagerID(connection, mgr_array[0], mgr_array[1])
+                const params = { first_name: answers.first_name, last_name: answers.last_name, role_id: roleID, manager_id: mgrEmpID }
+                const [rows, fields] = await connection.query(sqlQuery, params);
+                console.log(`***${answers.first_name} ${answers.last_name} has been added an an employee.***`);
+            }
+
+
+        })
 }
 
-const addRole = async(connection) => {
-    
+const addRole = async (connection) => {
+
     let departments = await help.getDepartments(connection);
-    
+
     await inquirer.prompt([    //Do I need 'return or await'?
 
         {
@@ -195,22 +199,22 @@ const addRole = async(connection) => {
             choices: departments
         }
     ])
-    .then(async (answers) => {
+        .then(async (answers) => {
 
-    let deptID = await help.getDeptID(connection, answers.dept);
-    const params = {title:answers.title, salary:answers.salary, department_id:deptID}
-    const sqlQuery = "INSERT INTO role SET ?"
-    const [rows, fields] = await connection.query(sqlQuery, params);
+            let deptID = await help.getDeptID(connection, answers.dept);
+            const params = { title: answers.title, salary: answers.salary, department_id: deptID }
+            const sqlQuery = "INSERT INTO role SET ?"
+            const [rows, fields] = await connection.query(sqlQuery, params);
 
-    console.log(`*The ${answers.title} role has been added*`);
-    })
+            console.log(`***The ${answers.title} role has been added.***`);
+        })
 }
 
-const addDept = async(connection) => {
-    
-    
-    
-    await inquirer.prompt(    
+const addDept = async (connection) => {
+
+
+
+    await inquirer.prompt(
 
         {
             type: "input",
@@ -218,15 +222,15 @@ const addDept = async(connection) => {
             message: "What is the name of the department you want to add?"
         }
     )
-    .then(async (answers) => {
-    
-    const sqlQuery = "INSERT INTO department SET ?"
-    const params = {dept_name:answers.newDept}
+        .then(async (answers) => {
 
-    const [rows, fields] = await connection.query(sqlQuery, params);
+            const sqlQuery = "INSERT INTO department SET ?"
+            const params = { dept_name: answers.newDept }
 
-    console.log(`*${answers.newDept} has been added!*`);
-    })
+            const [rows, fields] = await connection.query(sqlQuery, params);
+
+            console.log(`***The ${answers.newDept} department has been added.***`);
+        })
 }
 
 const updateEmployeeRole = async (connection) => {
@@ -251,18 +255,18 @@ const updateEmployeeRole = async (connection) => {
         }
 
     ])
-    .then(async(answers) => {
+        .then(async (answers) => {
 
-        
-        let array = answers.update.split(' ');
-        let roleID = await help.getRoleID(connection, answers.role);
-        //const Query = `UPDATE employee SET role_id=${roleID} WHERE first_name=${array[0]} AND last_name=${array[1]}`
-        const sqlQuery = "UPDATE employee SET ? WHERE ? AND ?"
-        const params = [{role_id:roleID}, {first_name:array[0]}, {last_name:array[1]}]
 
-        const [rows, fields] = await connection.query(sqlQuery, params);
-        console.log(`*${answers.update} is now in a ${answers.role} role.*`);
-    })
+            let array = answers.update.split(' ');
+            let roleID = await help.getRoleID(connection, answers.role);
+            //const Query = `UPDATE employee SET role_id=${roleID} WHERE first_name=${array[0]} AND last_name=${array[1]}`
+            const sqlQuery = "UPDATE employee SET ? WHERE ? AND ?"
+            const params = [{ role_id: roleID }, { first_name: array[0] }, { last_name: array[1] }]
+
+            const [rows, fields] = await connection.query(sqlQuery, params);
+            console.log(`***${answers.update} is now in a ${answers.role} role.***`);
+        })
 }
 
 const updateManager = async (connection) => {
@@ -286,30 +290,31 @@ const updateManager = async (connection) => {
         }
 
     ])
-    .then(async(answers) => {
+        .then(async (answers) => {
 
-        
-        let empArray = answers.employee.split(' ');
-        let mgrArray = answers.manager.split(' ');
-        //UPDATE employee SET manager_id=null WHERE first_name="ash" AND last_name="ketchup";
-        //set manager_id to null to convert the employee into a manager
-        const sqlQuery = "UPDATE employee SET ? WHERE ? AND ?"
-        const params = [{manager_id:null}, {first_name:mgrArray[0]}, {last_name:mgrArray[1]}]
-        const [rows, fields] = await connection.query(sqlQuery, params);
-        //set employee's manager_id to the manager's emp_id
-        const sqlQuery2 = "UPDATE employee SET ? WHERE ? AND ?"
-        let empID = await help.getEmpID(connection, mgrArray[0],mgrArray[1]);
-        const params2 = [{manager_id:empID}, {first_name:empArray[0]}, {last_name:empArray[1]}]
-        const [rows2, fields2] = await connection.query(sqlQuery2, params2);
-        console.log(`*${answers.manager} is now the manager of ${answers.employee}.*`);
-    })
+
+            let empArray = answers.employee.split(' ');
+            let mgrArray = answers.manager.split(' ');
+
+            //set manager_id to null to convert the employee into a manager
+            const sqlQuery = "UPDATE employee SET ? WHERE ? AND ?"
+            const params = [{ manager_id: null }, { first_name: mgrArray[0] }, { last_name: mgrArray[1] }]
+            const [rows, fields] = await connection.query(sqlQuery, params);
+
+            //set employee's manager_id to the manager's emp_id
+            const sqlQuery2 = "UPDATE employee SET ? WHERE ? AND ?"
+            let empID = await help.getEmpID(connection, mgrArray[0], mgrArray[1]);
+            const params2 = [{ manager_id: empID }, { first_name: empArray[0] }, { last_name: empArray[1] }]
+            const [rows2, fields2] = await connection.query(sqlQuery2, params2);
+            console.log(`***${answers.manager} is now the manager of ${answers.employee}.***`);
+        })
 }
 
-const deleteEmployee = async(connection) => {
-    
+const deleteEmployee = async (connection) => {
+
     let employees = await help.getEmployees(connection);
-    
-    await inquirer.prompt([   
+
+    await inquirer.prompt([
 
         {
             type: "list",
@@ -317,25 +322,25 @@ const deleteEmployee = async(connection) => {
             message: "Which employee would you like to remove?",
             choices: employees
         }
-        
+
     ])
-    .then(async (answers) => {
-    
-    let array = answers.remove.split(' ');
-    const sqlQuery = "DELETE FROM employee WHERE ? and ?"
-    const params = [{first_name: array[0]}, {last_name: array[1]}]
+        .then(async (answers) => {
 
-    const [rows, fields] = await connection.query(sqlQuery, params);
+            let array = answers.remove.split(' ');
+            const sqlQuery = "DELETE FROM employee WHERE ? and ?"
+            const params = [{ first_name: array[0] }, { last_name: array[1] }]
 
-    console.log(`*${answers.remove} has been removed.*`);
-    })
+            const [rows, fields] = await connection.query(sqlQuery, params);
+
+            console.log(`***${answers.remove} has been removed.***`);
+        })
 }
 
-const deleteDept = async(connection) => {
-    
+const deleteDept = async (connection) => {
+
     let depts = await help.getDepartments(connection);
-    
-    await inquirer.prompt(    
+
+    await inquirer.prompt(
 
         {
             type: "list",
@@ -344,22 +349,22 @@ const deleteDept = async(connection) => {
             choices: depts
         }
     )
-    .then(async (answers) => {
-    
-    const sqlQuery = "DELETE FROM department WHERE ?"
-    const params = {dept_name:answers.delDept}
+        .then(async (answers) => {
 
-    const [rows, fields] = await connection.query(sqlQuery, params);
+            const sqlQuery = "DELETE FROM department WHERE ?"
+            const params = { dept_name: answers.delDept }
 
-    console.log(`*${answers.delDept} department has been removed.*`);
-    })
+            const [rows, fields] = await connection.query(sqlQuery, params);
+
+            console.log(`***${answers.delDept} department has been removed.***`);
+        })
 }
 
-const deleteRole = async(connection) => {
-    
+const deleteRole = async (connection) => {
+
     let roles = await help.getRoles(connection);
-    
-    await inquirer.prompt([ 
+
+    await inquirer.prompt([
 
         {
             type: "list",
@@ -368,14 +373,14 @@ const deleteRole = async(connection) => {
             choices: roles
         }
     ])
-    .then(async (answers) => {
+        .then(async (answers) => {
 
-    const sqlQuery = "DELETE FROM Role WHERE ?";
-    const params = {title:answers.delRole};
-    const [rows, fields] = await connection.query(sqlQuery, params);
+            const sqlQuery = "DELETE FROM Role WHERE ?";
+            const params = { title: answers.delRole };
+            const [rows, fields] = await connection.query(sqlQuery, params);
 
-    console.log(`*The ${answers.delRole} role has been removed.*`);
-    })
+            console.log(`***The ${answers.delRole} role has been removed.***`);
+        })
 }
 
 exports.userPrompt = userPrompt;
