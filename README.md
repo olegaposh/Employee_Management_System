@@ -25,7 +25,7 @@
   
     
   
-  A CLI based employee manager system that completes your essnetial CRUD functions. 
+  A CLI based employee manager system that completes your essential CRUD functions. 
   
      
   
