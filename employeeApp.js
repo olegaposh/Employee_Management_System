@@ -16,7 +16,7 @@ const main = async () => {
         console.log(`Connected to database with ID ${connection.threadId}`);
 
         await functions.userPrompt(connection);
-        
+       
     } catch (err) {
         console.log(err);
     }

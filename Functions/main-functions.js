@@ -11,7 +11,7 @@ const userPrompt = async (connection) => {
         type: "list",
         name: "menu",
         message: "What would you like to do?",
-        choices:["View Employees","View Employees by Manager","View Roles","View Departments","View Utilized Budget","Add Employee","Add Role","Add Department","Update Employee Role","Remove Employee","Remove Role","Remove Department"]
+        choices:["View Employees","View Employees by Manager","View Roles","View Departments","View Utilized Budget","Add Employee","Add Role","Add Department","Update Employee Role","Update Manager","Remove Employee","Remove Role","Remove Department"]
     })
     .then(async(response) => {
 
@@ -61,6 +61,11 @@ const userPrompt = async (connection) => {
                 console.log("         *****-------------------- Update Employee Role --------------------*****");
                 await updateEmployeeRole(connection);
                 break;
+
+            case "Update Manager":
+            console.log("         *****-------------------- Update Manager --------------------*****");
+            await updateManager(connection);
+            break;
 
             case "Remove Employee":
                 console.log("         *****-------------------- Remove Employee --------------------*****");
@@ -260,6 +265,46 @@ const updateEmployeeRole = async (connection) => {
     })
 }
 
+const updateManager = async (connection) => {
+
+    let employees = await help.getEmployees(connection);
+    await inquirer.prompt([
+
+        {
+            type: "list",
+            name: "employee",
+            message: "For which employee would you like to update their manager?",
+            choices: employees
+
+        },
+        {
+            type: "list",
+            name: "manager",
+            message: "Choose the new manager for the previously selected employee",
+            choices: employees
+
+        }
+
+    ])
+    .then(async(answers) => {
+
+        
+        let empArray = answers.employee.split(' ');
+        let mgrArray = answers.manager.split(' ');
+        //UPDATE employee SET manager_id=null WHERE first_name="ash" AND last_name="ketchup";
+        //set manager_id to null to convert the employee into a manager
+        const sqlQuery = "UPDATE employee SET ? WHERE ? AND ?"
+        const params = [{manager_id:null}, {first_name:mgrArray[0]}, {last_name:mgrArray[1]}]
+        const [rows, fields] = await connection.query(sqlQuery, params);
+        //set employee's manager_id to the manager's emp_id
+        const sqlQuery2 = "UPDATE employee SET ? WHERE ? AND ?"
+        let empID = await help.getEmpID(connection, mgrArray[0],mgrArray[1]);
+        const params2 = [{manager_id:empID}, {first_name:empArray[0]}, {last_name:empArray[1]}]
+        const [rows2, fields2] = await connection.query(sqlQuery2, params2);
+        console.log(`*${answers.manager} is now the manager of ${answers.employee}.*`);
+    })
+}
+
 const deleteEmployee = async(connection) => {
     
     let employees = await help.getEmployees(connection);
@@ -343,6 +388,7 @@ exports.addEmployee = addEmployee;
 exports.addRole = addRole;
 exports.addDept = addDept;
 exports.updateEmployeeRole = updateEmployeeRole;
+exports.updateManager = updateManager;
 exports.deleteEmployee = deleteEmployee;
 exports.deleteDept = deleteDept;
 exports.deleteRole = deleteRole;

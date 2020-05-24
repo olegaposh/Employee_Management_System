@@ -45,6 +45,17 @@ const getDeptID = async (connection, dept) => {
     return rows[0].dept_id;
         
 }
+const getEmpID = async (connection, first,last) => {
+
+    //whats the ID of the chosen Department (Marketing/Treasury/R&D)    
+        const sqlQuery = "SELECT emp_id FROM employee WHERE ? AND ?"
+        const params = [{first_name:first},{last_name:last}]
+        
+        const [rows, fields] = await connection.query(sqlQuery, params);
+        console.log(rows);
+        return rows[0].emp_id;
+            
+    }
     
 const getEmployees = async (connection) => {
 
@@ -80,6 +91,7 @@ exports.getRoleID = getRoleID;
 exports.getRoles = getRoles;
 exports.getDepartments = getDepartments;
 exports.getDeptID = getDeptID;
+exports.getEmpID = getEmpID;
 exports.getEmployees = getEmployees;
 exports.getManagers = getManagers;
 exports.getManagerID = getManagerID;
